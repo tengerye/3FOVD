@@ -1,0 +1,5 @@
+
+image1: cat_dog.jpeg
+label1: A friendly dog and a cat rest together in a cozy pet bed against a light green background.
+label2: a cat and a dog.
+
