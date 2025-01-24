@@ -1,4 +1,5 @@
 import glob
+import os
 import pickle
 import math
 from collections import defaultdict
@@ -11,6 +12,8 @@ from groundingdino.util.inference import load_model, load_image, predict, annota
 import cv2
 import json
 
+
+DEVICE = 'cuda:0'
 
 def read_json(file_name):
     #Read JSON file
@@ -293,7 +296,7 @@ def get_grounding_output_baseline(model, image, captions, cats_ls, w, h, label_l
 
 # IMP1： 消融实验1
 def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, label_ls, box_threshold=0):
-    device = "cuda"
+    device = DEVICE
     image = image.to(device)
     # caption 预处理  拼接为 "类别名称#caption" 的格式
     captions = [preprocess_caption(caption, cat) for caption, cat in zip(captions, cats_ls)]
@@ -320,7 +323,7 @@ def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, lab
         # 对bbox进行格式转换
         for box in boxes_filt:
             # from 0..1 to 0..W, 0..H
-            box = box * torch.Tensor([image_source.size[0], image_source.size[1], image_source.size[0], image_source.size[1]])
+            box = box * torch.Tensor([image_source.shape[1], image_source.shape[0], image_source.shape[1], image_source.shape[0]])
             # from xywh to xyxy
             box[:2] -= box[2:] / 2
             box[2:] += box[:2]
@@ -338,17 +341,24 @@ def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, lab
         # 获取目标类别词的序列长度
         token_lens = len(test_tokenized["input_ids"][offset:-1])
         # 获取目标类别词的分数bbox
-        _, target_words_max_index = logits_filt[:, offset: token_lens + offset].mean(dim=1).max(dim=0)
-        logits_filt = logits_filt.max(dim=1)[0]
-        logits_filt[target_words_max_index] = 1
+        target_words_max_value, target_words_max_index = logits_filt[:, offset: token_lens + offset].max(dim=1)
+        target_index = nms(
+            tmp_boxes,
+            target_words_max_value,
+            iou_thresh=0.5  # TODO: set as parameter
+        )
 
-        res_index = nms(tmp_boxes, logits_filt, 0.5)
+        for idx in target_index:
+            if logits_filt[idx, target_words_max_index[idx]] > 0.25:
+                logits_filt[idx, target_words_max_index[idx]] = 1.0
+
+        res_index = nms(tmp_boxes, logits_filt.max(dim=1)[0], 0.5)
         res_boxes, res_logits = (torch.index_select(tmp_boxes, dim=0, index=res_index),
                                               torch.index_select(logits_filt, dim=0, index=res_index))
 
         for box, score in zip(res_boxes, res_logits):
             res_pred_boxes.append(box)
-            res_pred_scores.append(score)
+            res_pred_scores.append(score.max().item())
             res_pred_labels.append(label_id)
 
     return sort_boxes_by_score(res_pred_boxes, res_pred_labels, res_pred_scores, 1e6)
@@ -405,6 +415,8 @@ def get_grounding_output_IMP2(model, image, captions, cats_ls, w, h, label_ls, b
 
 def saveObject(obj, path):
     print("Saving " + path + '.pkl')
+    if not os.path.exists(path):
+        os.makedirs(path)
     with open(path + ".pkl", 'wb') as fid:
         pickle.dump(obj, fid)
 
@@ -429,9 +441,11 @@ def getCatsId2Item(annos):
 
 def gen_predict_data(img_dir, annotation_filepath, BOX_TRESHOLD):
     # 模型加载
-    model = load_model("groundingdino/config/GroundingDINO_SwinT_OGC.py", "weights/groundingdino_swint_ogc.pth")
-    model = model.to("cuda")
-    img_ls = glob.glob(f"{img_dir}*.jpg")
+    model = load_model("/home/ubuntu/workspace/GroundingDINO/groundingdino/config/GroundingDINO_SwinT_OGC.py", "/home/ubuntu/workspace/GroundingDINO/weights/groundingdino_swint_ogc.pth")
+    model = model.to(DEVICE)
+    model.eval()
+    
+    img_ls = glob.glob(f"{img_dir}/*.jpg")
     data = read_json(annotation_filepath)
     img2cat_dict = getImage2CatsMap(data)
     cats_dict = getCatsId2Item(data)
@@ -458,8 +472,8 @@ def gen_predict_data(img_dir, annotation_filepath, BOX_TRESHOLD):
             batch_caption_list = caption_ls[i * 10: (i + 1) * 10]
             batch_label_list = label_ls[i * 10: (i + 1) * 10]
             batch_cats_ls = cats_ls[i * 10: (i + 1) * 10]
-            # res = get_grounding_output(model, image, batch_caption_list, cats_ls, image_source.size[0],
-            #                            image_source.size[1],
+            # res = get_grounding_output(model, image, batch_caption_list, cats_ls, image_source.shape[1],
+            #                            image_source.shape[0],
             #                            box_threshold=BOX_TRESHOLD, label_ls=batch_label_list)
             res = get_grounding_output_IMP1(model, image, batch_caption_list, batch_cats_ls, image_source,
                                         box_threshold=BOX_TRESHOLD, label_ls=batch_label_list)
@@ -498,7 +512,9 @@ def getPathByEnv(env):
 
 
 def main():
-    img_dir, annotation_filepath = getPathByEnv("vehicle")
+    # img_dir, annotation_filepath = getPathByEnv("vehicle")
+    img_dir = '/home/ubuntu/workspace/3FOVD/datasets/3FOVD-V/images'
+    annotation_filepath = '/home/ubuntu/workspace/3FOVD/datasets/3FOVD-V/new_annotations_test4.json'
     BOX_TRESHOLD = 0.2
     gen_predict_data(img_dir, annotation_filepath, BOX_TRESHOLD)
 
