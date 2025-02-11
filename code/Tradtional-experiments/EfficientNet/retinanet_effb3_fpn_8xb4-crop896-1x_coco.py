@@ -4,7 +4,7 @@ _base_ = [
     '../_base_/datasets/coco_detection.py', '../_base_/default_runtime.py'
 ]
 
-image_size = (896, 896)
+image_size = (1333, 800)
 batch_augments = [dict(type='BatchFixedSizePad', size=image_size)]
 norm_cfg = dict(type='BN', requires_grad=True)
 checkpoint = 'https://download.openmmlab.com/mmclassification/v0/efficientnet/efficientnet-b3_3rdparty_8xb32-aa_in1k_20220119-5b4887a0.pth'  # noqa
