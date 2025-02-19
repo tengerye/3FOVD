@@ -234,7 +234,8 @@ def draw_grounding_output(tokenizer, caption, boxes, logits_filt, image_source, 
         # 获取每一个bounding box对应的分值最高的token (一个bbox对应一个token)
         for index, box in zip(token_index, boxes):
             token_id = input_ids[index]
-            phrases.append(tokenizer.decode(token_id))
+            words = tokenizer.batch_decode([token_id-1, token_id, token_id+1])
+            phrases.append(','.join(words))
     else:
         # 获取每一个bounding box对应的分值大于threshold的所有token
         for logit, box in zip(logits_filt, boxes):
@@ -295,7 +296,7 @@ def get_grounding_output_baseline(model, image, captions, cats_ls, w, h, label_l
 
 
 # IMP1： 消融实验1
-def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, label_ls, box_threshold=0):
+def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, label_ls, box_threshold=0, img_id=0):
     device = DEVICE
     image = image.to(device)
     # caption 预处理  拼接为 "类别名称#caption" 的格式
@@ -333,7 +334,7 @@ def get_grounding_output_IMP1(model, image, captions, cats_ls, image_source, lab
         # 初始化分词器
         tokenizer = model.tokenizer
         # 将产出的框和对应的token进行可视化
-        draw_grounding_output(tokenizer, caption, tmp_boxes, logits_filt, image_source, f"./image/exp1/test_draw/official_demo/test_{label_id}.jpg")
+        draw_grounding_output(tokenizer, caption, tmp_boxes, logits_filt, image_source, f"./image/exp1/test_draw/official_demo/test{img_id}_{label_id}.jpg")
         # 截取出目标类别词
         test_caption = caption.split("#")[0]
         test_tokenized = tokenizer(test_caption)
@@ -476,7 +477,7 @@ def gen_predict_data(img_dir, annotation_filepath, BOX_TRESHOLD):
             #                            image_source.shape[0],
             #                            box_threshold=BOX_TRESHOLD, label_ls=batch_label_list)
             res = get_grounding_output_IMP1(model, image, batch_caption_list, batch_cats_ls, image_source,
-                                        box_threshold=BOX_TRESHOLD, label_ls=batch_label_list)
+                                        box_threshold=BOX_TRESHOLD, label_ls=batch_label_list, img_id = filename[:-4] + '_' + str(batch_label_list[i]))
             # res = get_grounding_output_origin(model, image, batch_caption_list, batch_cats_ls, image_source.size[0],
             #                                   image_source.size[1],
             #                                   box_threshold=BOX_TRESHOLD, label_ls=batch_label_list)
