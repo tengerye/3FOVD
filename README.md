@@ -1,4 +1,20 @@
 We put the sampled images and corresponding annotation files into `datasets` folder. The full data will be released immediately after the paper is accepted.
 
-# Experiments for the Traditional methods
-If you are First, you need to install the `mmdetection` library
+# Datasets
+
+The structure of the 3FOVD-RP is like the follows:
+```
+- train
+    - images.zip
+    - instances_rp_train.json
+- val
+    - images.zip
+    - instances_rp_val.json
+- test
+    - images.zip
+    - instances_rp_val.json
+
+- rp_categories.csv
+```
+
+The structure of the 3FOVD-V is similar as that of 3FOVD-RP, but replacing `rp` with `car` from the above.
