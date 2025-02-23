@@ -1,3 +1,19 @@
+"""
+The module aims to produce Detic results (`detic_${DATASET}_test.json`) for images in test set.
+The results are stored in a JSON file with the following format:
+{
+    "caption_idx": {
+        "image_filename": {
+            "boxes": [[x1, y1, x2, y2], ...],
+            "labels_idx": [0, 1, ...],
+            "labels": ["class1", "class2", ...],
+            "scores": [0.98, 0.72, ...]
+        },
+        ...
+    },
+    ...
+}
+"""
 import argparse
 from collections import defaultdict
 from glob import glob
