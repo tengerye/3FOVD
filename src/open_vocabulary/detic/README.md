@@ -5,3 +5,5 @@
 3. In your conda environment `detic`, install `pandas` using: `pip install pandas==2.0.3`.
 
 4. Copy all python files in the directory `src/open_vocabulary/detic` into the `DETIC_ROOT`.
+
+5. In the `DETIC_ROOT` directory. To evaluation the 3FOVD-RP, run `python -W ignore main.py`. If you would like to see the visualization results, use the function `visualize_demo()`.
