@@ -12,7 +12,7 @@ The structure of the 3FOVD-RP is like the follows:
     - instances_rp_val.json
 - test
     - images.zip
-    - instances_rp_val.json
+    - instances_rp_test.json
 
 - rp_categories.csv
 ```
