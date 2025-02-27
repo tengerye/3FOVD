@@ -1,0 +1,6 @@
+pandas
+torch
+tqdm
+supervision
+numpy
+opencv-python
