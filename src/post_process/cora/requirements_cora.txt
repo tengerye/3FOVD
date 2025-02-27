@@ -1,0 +1,9 @@
+supervision
+opencv-python
+tqdm
+numpy
+Pillow
+torch
+torchvision
+pickle
+pandas
