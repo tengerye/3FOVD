@@ -19,6 +19,8 @@ The structure of the 3FOVD-RP is like the follows:
 
 The structure of the 3FOVD-V is similar as that of 3FOVD-RP, but replacing `rp` with `car` from the above.
 
+The dataset can only be used for research only. Feel free to contact us if you think our dataset violate your privacy.
+
 
 # Codebase
 The structure of this codebase is as follows:
