@@ -315,7 +315,7 @@ def main():
 
     complete_outputs = []
     complete_outputs_gpu = []
-    for img_path in tqdm(img_ls[:100]):
+    for img_path in tqdm(img_ls[:]):
 
         filename = img_path.split("/")[-1]
         rel_cat_ids = img2cat_dict[filename]

@@ -345,7 +345,7 @@ def main(args):
     # 数据遍历
     img_file_list = glob.glob(f"{img_path}*.jpg")
     img_processed = 0
-    for img_path in tqdm(img_file_list[:1000]):
+    for img_path in tqdm(img_file_list[:]):
         image_data, imm, w, h = get_image(img_path)
         imm = imm.to(device)
         img_output = {
