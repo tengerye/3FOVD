@@ -7,7 +7,80 @@ from typing import Dict, List, Tuple
 import cv2
 import numpy as np
 from PIL import Image
-from pyparsing import annotations
+
+
+product_label_colors = {
+    'packaging': (81, 159, 57), 
+    'rectangular': (255, 0, 171), 
+    'features': (235, 34, 6), 
+    'soft': (47, 114, 70), 
+    'plastic': (21, 114, 164), 
+    'text': (210, 157, 75), 
+    'baby': (116, 109, 106),
+    'logo': (95, 14, 69),
+    'and': (95, 14, 69),
+    'part': (95, 14, 69),
+    'cylindrical': (95, 14, 69),
+}
+
+
+def rotate_image_and_bboxes(
+    image: np.ndarray,
+    bboxes: list,
+    num_rotate: int = 1
+):
+    """
+    Rotate an image and its axis-aligned bounding boxes by 90 degrees clockwise
+    multiple times.
+
+    Args:
+        image (np.ndarray): The original image in (H, W, C) format.
+        bboxes (list): A list of bounding boxes, where each box is [x1, y1, x2, y2].
+        num_rotate (int): The number of 90-degree clockwise rotations to apply.
+
+    Returns:
+        (rotated_image, rotated_bboxes):
+            rotated_image (np.ndarray): The rotated image.
+            rotated_bboxes (list): The list of rotated bounding boxes in [x1, y1, x2, y2] format.
+    """
+
+    # We only need to rotate up to 3 times since 4 times is a full 360
+    num_rotate = num_rotate % 4
+    rotated_image = image.copy()
+    rotated_bboxes = bboxes.copy()
+
+    for _ in range(num_rotate):
+        # Get current image shape
+        old_h, old_w = rotated_image.shape[:2]
+
+        # Rotate the image by 90 deg clockwise
+        rotated_image = cv2.rotate(rotated_image, cv2.ROTATE_90_CLOCKWISE)
+
+        new_bboxes = []
+        for (x1, y1, x2, y2) in rotated_bboxes:
+            # Collect the four corners
+            corners = [(x1, y1), (x1, y2), (x2, y1), (x2, y2)]
+            transformed = []
+
+            for (x, y) in corners:
+                # Apply the 90° CW rotation transform
+                # new_x = old_h - 1 - y
+                # new_y = x
+                new_x = old_h - 1 - y
+                new_y = x
+                transformed.append((new_x, new_y))
+
+            # Now extract the min/max corners to form an AABB
+            xs = [p[0] for p in transformed]
+            ys = [p[1] for p in transformed]
+            nx1, nx2 = min(xs), max(xs)
+            ny1, ny2 = min(ys), max(ys)
+
+            new_bboxes.append([nx1, ny1, nx2, ny2])
+
+        rotated_bboxes = new_bboxes
+
+    return rotated_image, rotated_bboxes
 
 
 def visualize_predictions_vanilla(
@@ -61,7 +134,7 @@ def visualize_predictions_vanilla(
             text,
             text_position,
             fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=1,
+            fontScale=2,
             color=label_colors[label],
             thickness=3
         )
@@ -287,10 +360,11 @@ def test_visualize_coco_grouped(
         image,
         bboxes,
         labels,
-        scores
+        scores,
+        label_colors=product_label_colors,
     )
 
-    cv2.imwrite('out.jpg', image)
+    cv2.imwrite('vis_vanilla_merge.jpg', image)
 
 
 if __name__ == "__main__":
