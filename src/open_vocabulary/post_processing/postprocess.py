@@ -32,7 +32,79 @@ We need to convert this format to the standard COCO-style detection format:
 ```
 """
 import json
-from typing import List
+from typing import List, Tuple
+
+
+def remove_covered_boxes(
+        bboxes, 
+        scores, 
+        threshold=0.5,
+    ) -> List[int]:
+    """
+    Remove boxes that are covered by a higher-confidence box beyond the given threshold.
+    Also returns the original indices of the kept boxes.
+    
+    Args:
+        bboxes (list of lists or tuples): Each element is [x1, y1, x2, y2].
+        scores (list of float): Confidence scores, must be the same length as bboxes.
+        threshold (float): If a box is covered by another box with a higher score 
+                           beyond this fraction of its area, it will be removed.
+
+    Returns:
+        (final_bboxes, final_scores, final_indices):
+            final_bboxes: Filtered bounding boxes.
+            final_scores: Corresponding confidence scores.
+            final_indices: Indices (in the original order) of the kept bounding boxes.
+    """
+    assert len(bboxes) == len(scores), \
+        "Length of bboxes and scores must match."
+
+    def area(box):
+        """Compute area of a bounding box [x1, y1, x2, y2]."""
+        x1, y1, x2, y2 = box
+        return max(0, x2 - x1) * max(0, y2 - y1)
+
+    def intersection_area(box_a, box_b):
+        """Compute intersection area between two boxes."""
+        ax1, ay1, ax2, ay2 = box_a
+        bx1, by1, bx2, by2 = box_b
+        
+        inter_x1 = max(ax1, bx1)
+        inter_y1 = max(ay1, by1)
+        inter_x2 = min(ax2, bx2)
+        inter_y2 = min(ay2, by2)
+        
+        inter_w = max(0, inter_x2 - inter_x1)
+        inter_h = max(0, inter_y2 - inter_y1)
+        
+        return inter_w * inter_h
+
+    # Sort indices by descending confidence
+    indices_sorted_by_score = sorted(range(len(bboxes)), key=lambda i: scores[i], reverse=True)
+    
+    keep_indices = []
+    
+    for idx in indices_sorted_by_score:
+        box = bboxes[idx]
+        box_area = area(box)
+        
+        covered = False
+        for kept_idx in keep_indices:
+            inter_area = intersection_area(bboxes[kept_idx], box)
+            cover_ratio = inter_area / float(box_area) if box_area > 0 else 0
+            
+            # If current box is covered beyond threshold by a higher confidence box, we skip it
+            if cover_ratio >= threshold and scores[kept_idx] > scores[idx]:
+                covered = True
+                break
+        
+        if not covered:
+            keep_indices.append(idx)
+    
+    # Sort 'keep_indices' so that final results follow the original input order
+    keep_indices.sort()
+
+    return keep_indices
 
 
 def convert_custom_predictions_to_coco(
@@ -106,9 +178,9 @@ def evaluate():
 
 # Example usage:
 if __name__ == "__main__":
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_small.json", "r") as f:
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds, top_k=300)
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_small_coco.json", "w") as f:
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco.json", "w") as f:
         json.dump(pred_coco_format, f)

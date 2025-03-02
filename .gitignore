@@ -164,3 +164,6 @@ cython_debug/
 
 *.jpg
 .vscode
+*.jpeg
+*.txt
+*.ipynb

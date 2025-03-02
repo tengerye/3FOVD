@@ -48,8 +48,8 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
 
 if __name__ == "__main__":
     # Example usage:
-    ground_truth_json = "path/to/ground_truth.json"
-    predictions_json = "path/to/predictions.json"
+    ground_truth_json = "/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/instances_rp_test.json"
+    predictions_json = "/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/vild_product_test_prediction_coco.json"
 
     results = coco_evaluation(ground_truth_json, predictions_json, iou_type="bbox")
     print("COCO Evaluation Results:")
