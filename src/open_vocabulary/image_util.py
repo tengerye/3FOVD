@@ -10,17 +10,37 @@ from PIL import Image
 
 
 product_label_colors = {
-    'packaging': (81, 159, 57), 
-    'rectangular': (255, 0, 171), 
-    'features': (235, 34, 6), 
-    'soft': (47, 114, 70), 
-    'plastic': (21, 114, 164), 
-    'text': (210, 157, 75), 
+    'packaging': (81, 159, 57),
+    'rectangular': (255, 0, 171),
+    'features': (235, 34, 6),
+    'soft': (47, 114, 70),
+    'plastic': (21, 114, 164),
+    'text': (210, 157, 75),
     'baby': (116, 109, 106),
     'logo': (95, 14, 69),
-    'and': (95, 14, 69),
-    'part': (95, 14, 69),
-    'cylindrical': (95, 14, 69),
+    'and': (123, 45, 67),
+    'part': (87, 23, 45),
+    'cylindrical': (34, 56, 78),
+    'tin': (124, 245, 24),
+    'can': (88, 169, 228),
+    'notebook': (99, 199, 238),
+    'pen': (210, 157, 75),
+    'bottle': (255, 0, 171),
+    'toothpaste': (11, 175, 130),
+    'purple-themed': (18, 207, 214),
+    'erasers': (189, 199, 219),
+    'shield-shaped': (130, 94, 16),
+    'square-shaped': (183, 239, 182),
+    'droplet-shaped': (98, 189, 107),
+    'container': (243, 137, 144),
+    'enen': (137, 2, 194),
+    'safeguard': (196, 145, 255),
+    'pastry': (193, 180, 167),
+    'eraser': (127, 177, 34),
+    'emblem': (98, 1, 252),
+    'pink': (27, 236, 57),
+    'wafer': (39, 40, 113),
+    'yellow-colored': (81, 175, 11)
 }
 
 
@@ -321,6 +341,8 @@ def test_visualize_gt():
 
 def test_visualize_coco_grouped(
     image_id: int,
+    predict_file: str = '/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json',
+    out_file: str = 'vis_vanilla_merge_full.jpg'
 ):
     # Get the image path.
     with open('/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/instances_rp_test.json', 'r') as f:
@@ -336,7 +358,7 @@ def test_visualize_coco_grouped(
 
 
     # Load the COCO results for this image.
-    with open('/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/vild_product_test_prediction_small_coco.json', 'r') as f:
+    with open(predict_file, 'r') as f:
         coco_results = json.load(f)
 
 
@@ -368,8 +390,12 @@ def test_visualize_coco_grouped(
         label_colors=product_label_colors,
     )
 
-    cv2.imwrite('vis_vanilla_merge.jpg', image)
+    cv2.imwrite(out_file, image)
 
 
 if __name__ == "__main__":
-    test_visualize_coco_grouped(11006)
+    test_visualize_coco_grouped(
+        11006,
+        '/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json',
+        out_file='vis_vanilla_merge_pp.jpg',
+    )
