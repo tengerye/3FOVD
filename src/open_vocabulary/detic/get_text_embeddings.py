@@ -14,7 +14,7 @@ def get_text_embedding(caption: str = None, class_names: List[str] = None)-> Tup
     assert caption is not None or class_names is not None, "Both parameters are None!"
 
     if class_names is None:
-        class_names = caption.split(',')
+        class_names = caption_preprocess(caption)
     text_embedding = get_clip_embeddings(class_names)  
     return class_names, text_embedding.detach().cpu().tolist()
 
