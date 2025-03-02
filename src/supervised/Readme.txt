@@ -42,5 +42,6 @@ python tools/train.py configs/centernet/centernet-update_r50-caffe_fpn_ms-1x_coc
 
 # 另，Co-Detr特殊，其模型在Co-DETR文件夹下，进入Co-DETR，前面安装过程一致，使用python tools/train.py /projects/co_deformable_detr/co_deformable_detr_r50_1x_coco.py --work-dir WORKDIR 进行训练
 
+For training with multiple GPUs, we can use the bash `tools/dist_train.sh ${CONFIG_FILE}  ${GPU_NUM} --work-dir supervised/centernet/.
 
-
+For test with multiple GPUs, we can use the bash `./tools/dist_test.sh ${CONFIG_FILE} ${CHECKPOINT_FILE} ${GPU_NUM} [--out ${RESULT_FILE}] [--eval ${EVAL_METRICS}]`.
