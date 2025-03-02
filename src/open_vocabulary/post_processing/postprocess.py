@@ -31,6 +31,7 @@ We need to convert this format to the standard COCO-style detection format:
 ]
 ```
 """
+from functools import partial
 import json
 from typing import List, Tuple
 
@@ -94,7 +95,7 @@ def remove_covered_boxes(
             cover_ratio = inter_area / float(box_area) if box_area > 0 else 0
             
             # If current box is covered beyond threshold by a higher confidence box, we skip it
-            if cover_ratio >= threshold and scores[kept_idx] > scores[idx]:
+            if cover_ratio >= threshold and scores[kept_idx] >= scores[idx]:
                 covered = True
                 break
         
@@ -109,6 +110,7 @@ def remove_covered_boxes(
 
 def convert_custom_predictions_to_coco(
     custom_preds,
+    pp_func: callable = None,
     top_k=None,
 ) -> List[dict]:
     """
@@ -116,7 +118,7 @@ def convert_custom_predictions_to_coco(
 
     Args:
         custom_preds (dict): A dictionary of the form:
-
+        pp_func (callable): A post-processing function to return indices of kept boxes.
         top_k (int): Maximum number of boxes to keep per (image_id, caption_id).
 
     Returns:
@@ -135,6 +137,13 @@ def convert_custom_predictions_to_coco(
             boxes = cap_data.get("boxes", [])
             scores = cap_data.get("scores", [])
             words = cap_data.get("words", [])
+
+            if pp_func is not None:
+                # Advanced post-processing.
+                indices = remove_covered_boxes(boxes, scores, threshold=0.8)
+                boxes = [boxes[i] for i in indices]
+                words = [words[i] for i in indices]
+                scores = [scores[i] for i in indices]
 
             # If there's a mismatch, skip or handle gracefully
             assert len(boxes) == len(scores), f"Number of boxes and scores must match!"
@@ -181,6 +190,6 @@ if __name__ == "__main__":
     with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, top_k=300)
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco.json", "w") as f:
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=partial(remove_covered_boxes, threshold=0.8))
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json", "w") as f:
         json.dump(pred_coco_format, f)
