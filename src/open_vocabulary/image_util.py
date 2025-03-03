@@ -40,7 +40,9 @@ product_label_colors = {
     'emblem': (98, 1, 252),
     'pink': (27, 236, 57),
     'wafer': (39, 40, 113),
-    'yellow-colored': (81, 175, 11)
+    'yellow-colored': (81, 175, 11),
+    'brand': (13, 248, 84),
+    'content': (226, 197, 194)
 }
 
 
