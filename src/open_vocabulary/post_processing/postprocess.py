@@ -159,7 +159,7 @@ def convert_custom_predictions_to_coco(
             if pp_func_iter is not None:
                 # Advanced post-processing.
                 for pp_func in pp_func_iter:
-                    indices = pp_func(boxes, scores, words8)
+                    indices = pp_func(boxes, scores, words)
                     boxes = [boxes[i] for i in indices]
                     words = [words[i] for i in indices]
                     scores = [scores[i] for i in indices]
