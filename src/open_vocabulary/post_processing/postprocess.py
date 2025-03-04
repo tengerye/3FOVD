@@ -209,8 +209,8 @@ if __name__ == "__main__":
     with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
-    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=partial(remove_covered_boxes, threshold=0.8))
-    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json", "w") as f:
+    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
+    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_baseline.json", "w") as f:
     #     json.dump(pred_coco_format, f)
 
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])

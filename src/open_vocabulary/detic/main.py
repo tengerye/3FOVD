@@ -369,7 +369,7 @@ def run_a_caption_on_images(
         boxes = instances['boxes']
         labels = instances['labels']
         scores = instances['scores']
-
+ 
         # Map numeric labels to text
         for b, label, sc in zip(boxes, labels, scores):
             instance_data = {
