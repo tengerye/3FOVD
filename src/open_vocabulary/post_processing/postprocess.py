@@ -128,7 +128,7 @@ def remove_boxes_by_keywords(
 
 def convert_custom_predictions_to_coco(
     custom_preds,
-    pp_func: callable = None,
+    pp_func_iter: List[callable] = None,
     top_k=None,
 ) -> List[dict]:
     """
@@ -156,12 +156,13 @@ def convert_custom_predictions_to_coco(
             scores = cap_data.get("scores", [])
             words = cap_data.get("words", [])
 
-            if pp_func is not None:
+            if pp_func_iter is not None:
                 # Advanced post-processing.
-                indices = remove_covered_boxes(boxes, scores, words, threshold=0.8)
-                boxes = [boxes[i] for i in indices]
-                words = [words[i] for i in indices]
-                scores = [scores[i] for i in indices]
+                for pp_func in pp_func_iter:
+                    indices = pp_func(boxes, scores, words8)
+                    boxes = [boxes[i] for i in indices]
+                    words = [words[i] for i in indices]
+                    scores = [scores[i] for i in indices]
 
             # If there's a mismatch, skip or handle gracefully
             assert len(boxes) == len(scores), f"Number of boxes and scores must match!"
@@ -212,6 +213,6 @@ if __name__ == "__main__":
     # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json", "w") as f:
     #     json.dump(pred_coco_format, f)
 
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=remove_boxes_by_keywords)
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_kw.json", "w") as f:
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_cb.json", "w") as f:
         json.dump(pred_coco_format, f)
