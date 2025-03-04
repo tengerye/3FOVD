@@ -38,7 +38,8 @@ from typing import List, Tuple
 
 def remove_covered_boxes(
         bboxes, 
-        scores, 
+        scores,
+        labels, 
         threshold=0.5,
     ) -> List[int]:
     """
@@ -108,6 +109,23 @@ def remove_covered_boxes(
     return keep_indices
 
 
+def remove_boxes_by_keywords(
+        bboxes, 
+        scores,
+        labels, 
+        threshold=0.5,
+    ) -> List[int]:
+
+    keywords = ['logo']
+    assert len(bboxes) == len(scores), \
+        "Length of bboxes and scores must match."
+    answer = []
+    for idx, (box, score, label) in enumerate(zip(bboxes, scores, labels)):
+        if label in keywords:
+            continue
+        answer.append(idx)
+    return answer
+
 def convert_custom_predictions_to_coco(
     custom_preds,
     pp_func: callable = None,
@@ -140,7 +158,7 @@ def convert_custom_predictions_to_coco(
 
             if pp_func is not None:
                 # Advanced post-processing.
-                indices = remove_covered_boxes(boxes, scores, threshold=0.8)
+                indices = remove_covered_boxes(boxes, scores, words, threshold=0.8)
                 boxes = [boxes[i] for i in indices]
                 words = [words[i] for i in indices]
                 scores = [scores[i] for i in indices]
@@ -190,6 +208,10 @@ if __name__ == "__main__":
     with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=partial(remove_covered_boxes, threshold=0.8))
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json", "w") as f:
+    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=partial(remove_covered_boxes, threshold=0.8))
+    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_pp.json", "w") as f:
+    #     json.dump(pred_coco_format, f)
+
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func=remove_boxes_by_keywords)
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_kw.json", "w") as f:
         json.dump(pred_coco_format, f)
