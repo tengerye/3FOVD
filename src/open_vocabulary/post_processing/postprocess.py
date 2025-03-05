@@ -39,7 +39,8 @@ from typing import List, Tuple
 def remove_covered_boxes(
         bboxes, 
         scores,
-        labels, 
+        labels,
+        type,
         threshold=0.5,
     ) -> List[int]:
     """
@@ -91,8 +92,14 @@ def remove_covered_boxes(
         box_area = area(box)
 
         # 对不满足数据集分布的极端小的框 和 极端大的框进行过滤
-        if box_area <= 200 * 200 or box_area >= 2250*2000:
-            continue
+        if type == "product":
+            # product
+            if box_area <= 200 * 200 or box_area >= 2250 * 2000:
+                continue
+        else:
+            # vehicle
+            if box_area <= 14 * 14 or box_area >= 960 * 960:
+                continue
         covered = False
         for kept_idx in keep_indices:
             inter_area = intersection_area(bboxes[kept_idx], box)
@@ -213,7 +220,7 @@ if __name__ == "__main__":
     # print("后处理完成，将结果写入文件")
     # with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_baseline.json", "w") as f:
         # json.dump(pred_coco_format, f)
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[partial(remove_covered_boxes, threshold=0.8)])
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[partial(remove_covered_boxes, threshold=0.8, type="product")])
     print("后处理完成，将结果写入文件")
     with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover_v2.json", "w") as f:
          json.dump(pred_coco_format, f)
