@@ -89,7 +89,10 @@ def remove_covered_boxes(
     for idx in indices_sorted_by_score:
         box = bboxes[idx]
         box_area = area(box)
-        
+
+        # 对不满足数据集分布的极端小的框 和 极端大的框进行过滤
+        if box_area <= 200 * 200 and box_area >= 2500 * 2500:
+            continue
         covered = False
         for kept_idx in keep_indices:
             inter_area = intersection_area(bboxes[kept_idx], box)
