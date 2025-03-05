@@ -178,16 +178,16 @@ def convert_custom_predictions_to_coco(
                 w = x2 - x1
                 h = y2 - y1
 
-            # Prepare the COCO-format detection
-            detection = {
-                "image_id": int(img_id),
-                # Convert caption_id to integer if possible
-                "category_id": int(cap_id),
-                "bbox": [float(x1), float(y1), float(w), float(h)],
-                "score": float(scr),
-                "word": word,
-            }
-            coco_results.append(detection)
+                # Prepare the COCO-format detection
+                detection = {
+                    "image_id": int(img_id),
+                    # Convert caption_id to integer if possible
+                    "category_id": int(cap_id),
+                    "bbox": [float(x1), float(y1), float(w), float(h)],
+                    "score": float(scr),
+                    "word": word,
+                }
+                coco_results.append(detection)
 
     return coco_results
 
@@ -198,11 +198,11 @@ def evaluate():
 
 # Example usage:
 if __name__ == "__main__":
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
+    with open("datasets/3FOVD-RP/test/vild_car_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_baseline.json", "w") as f:
+    with open("datasets/3FOVD-RP/test/vild_car_test_prediction_coco_baseline.json", "w") as f:
         json.dump(pred_coco_format, f)
 
     # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])
