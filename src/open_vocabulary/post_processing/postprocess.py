@@ -129,7 +129,7 @@ def remove_boxes_by_keywords(
 def convert_custom_predictions_to_coco(
     custom_preds,
     pp_func_iter: List[callable] = None,
-    top_k=None,
+    top_k=100,
 ) -> List[dict]:
     """
     Convert a custom prediction format into standard COCO-style detection results.
@@ -147,9 +147,6 @@ def convert_custom_predictions_to_coco(
     # Loop over each image
     for img_id, caption_dict in custom_preds.items():
 
-        bbox_array = []
-        score_array = []
-        words_array = []
         # Loop over each caption in this image
         for cap_id, cap_data in caption_dict.items():
             boxes = cap_data.get("boxes", [])
@@ -166,25 +163,20 @@ def convert_custom_predictions_to_coco(
 
             # If there's a mismatch, skip or handle gracefully
             assert len(boxes) == len(scores), f"Number of boxes and scores must match!"
-            bbox_array.extend(boxes)
-            score_array.extend(scores)
-            words_array.extend(words)
 
-        # Combine boxes and scores for sorting
-        zipped_data = list(zip(bbox_array, score_array, words_array))
+            zipped_data = list(zip(boxes, scores, words))
+            # Sort by descending score
+            zipped_data.sort(key=lambda x: x[1], reverse=True)
 
-        # Sort by descending score
-        zipped_data.sort(key=lambda x: x[1], reverse=True)
+            # Keep only top K
+            if top_k is None:
+                top_k = len(zipped_data)
+            top_data = zipped_data[:top_k]
 
-        # Keep only top K
-        if top_k is None:
-            top_k = len(zipped_data)
-        top_data = zipped_data[:top_k]
-
-        # Convert each bounding box from [x1, y1, x2, y2] to [x, y, w, h]
-        for (x1, y1, x2, y2), scr, word in top_data:
-            w = x2 - x1
-            h = y2 - y1
+            # Convert each bounding box from [x1, y1, x2, y2] to [x, y, w, h]
+            for (x1, y1, x2, y2), scr, word in top_data:
+                w = x2 - x1
+                h = y2 - y1
 
             # Prepare the COCO-format detection
             detection = {
@@ -209,10 +201,10 @@ if __name__ == "__main__":
     with open("datasets/3FOVD-RP/test/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
 
-    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
-    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_baseline.json", "w") as f:
-    #     json.dump(pred_coco_format, f)
-
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])
-    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_cb.json", "w") as f:
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
+    with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_baseline.json", "w") as f:
         json.dump(pred_coco_format, f)
+
+    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])
+    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_cb.json", "w") as f:
+    #     json.dump(pred_coco_format, f)
