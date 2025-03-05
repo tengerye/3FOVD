@@ -91,7 +91,7 @@ def remove_covered_boxes(
         box_area = area(box)
 
         # 对不满足数据集分布的极端小的框 和 极端大的框进行过滤
-        if box_area <= 200 * 200 and box_area >= 2500 * 2500:
+        if box_area <= 200 * 200 or box_area >= 2250*2000:
             continue
         covered = False
         for kept_idx in keep_indices:
