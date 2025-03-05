@@ -215,5 +215,5 @@ if __name__ == "__main__":
         # json.dump(pred_coco_format, f)
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[partial(remove_covered_boxes, threshold=0.8)])
     print("后处理完成，将结果写入文件")
-    with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover.json", "w") as f:
+    with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover_v2.json", "w") as f:
          json.dump(pred_coco_format, f)
