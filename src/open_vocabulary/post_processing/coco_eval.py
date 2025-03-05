@@ -12,15 +12,17 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
     :param pred_json_path: Path to JSON with detection results.
     :param iou_type: The iouType to evaluate ('bbox', 'segm', or 'keypoints').
     """
+    print("开始加载数据")
     # Load ground truth annotations
     coco_gt = COCO(gt_json_path)
     
     # Load predicted results
     coco_dt = coco_gt.loadRes(pred_json_path)
     
+    print("数据加载完毕")
     # Initialize COCOeval object
     coco_eval = COCOeval(coco_gt, coco_dt, iouType=iou_type)
-    
+    print("开始计算")
     # Run evaluation
     coco_eval.evaluate()
     coco_eval.accumulate()
@@ -48,8 +50,8 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
 
 if __name__ == "__main__":
     # Example usage:
-    ground_truth_json = "/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/instances_rp_test.json"
-    predictions_json = "/home/ubuntu/workspace/3FOVD/datasets/3FOVD-RP/test/vild_product_test_prediction_coco_cb.json"
+    ground_truth_json = "/root/post_process_data/vild/product/annotations/instances_product_test.json"
+    predictions_json = "/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover.json"
 
     results = coco_evaluation(ground_truth_json, predictions_json, iou_type="bbox")
     print("COCO Evaluation Results:")

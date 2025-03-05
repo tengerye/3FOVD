@@ -145,6 +145,7 @@ def convert_custom_predictions_to_coco(
     coco_results = []
 
     # Loop over each image
+    img_cnt = 0
     for img_id, caption_dict in custom_preds.items():
 
         # Loop over each caption in this image
@@ -188,6 +189,9 @@ def convert_custom_predictions_to_coco(
                     "word": word,
                 }
                 coco_results.append(detection)
+        img_cnt += 1
+        if img_cnt % 100 ==0:
+            print(f"has handled img num is : {img_cnt}")
 
     return coco_results
 
@@ -198,13 +202,15 @@ def evaluate():
 
 # Example usage:
 if __name__ == "__main__":
-    with open("datasets/3FOVD-RP/test/vild_car_test_prediction.json", "r") as f:
+    print("开始load 预测文件")
+    with open("/root/post_process_data/vild/product/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
-
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
-    with open("datasets/3FOVD-RP/test/vild_car_test_prediction_coco_baseline.json", "w") as f:
-        json.dump(pred_coco_format, f)
-
-    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[remove_boxes_by_keywords, partial(remove_covered_boxes, threshold=0.8)])
-    # with open("datasets/3FOVD-RP/test/vild_product_test_prediction_coco_cb.json", "w") as f:
-    #     json.dump(pred_coco_format, f)
+    print("预测文件加载完毕")
+    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
+    # print("后处理完成，将结果写入文件")
+    # with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_baseline.json", "w") as f:
+        # json.dump(pred_coco_format, f)
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[partial(remove_covered_boxes, threshold=0.8)])
+    print("后处理完成，将结果写入文件")
+    with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover.json", "w") as f:
+         json.dump(pred_coco_format, f)
