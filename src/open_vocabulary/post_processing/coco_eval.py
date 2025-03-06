@@ -66,7 +66,8 @@ if __name__ == "__main__":
     # Example usage:
     ground_truth_json = "/root/post_process_data/vild/product/instances_product_test.json"
     predictions_json = "/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json"
-
+    # ground_truth_json = "/data/data/final/product/product_yolo/valid/annotations/instances_product_valid.json"
+    # predictions_json = "/data/chaihaojiang/postprocess_data_0305/vild/vild_product_val_prediction_visualized_coco_baseline.json"
     results = coco_evaluation(ground_truth_json, predictions_json, iou_type="bbox")
     end_time = time.time()
     print(f"共耗时{end_time - start_time}秒")

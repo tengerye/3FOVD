@@ -8,22 +8,32 @@ from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
 from datetime import datetime
 
+# 全局缓存区（通过fork机制共享）
+_shared_cache = {}
+
 def get_nowtime():
     now = datetime.now()
     formatted_time = now.strftime('%Y/%m/%d %H:%M:%S')
     return formatted_time
 
+def _init_worker(shared_cache):
+    """
+    子进程初始化验证（确保数据存在）
+    """
+    global _shared_cache
+    _shared_cache = shared_cache
+    assert _shared_cache['coco_gt'] is not None, "数据未正确共享"
+
+
 def evaluate_chunk(args):
     """
     子进程评估函数，处理指定类别的评估任务
     """
-    gt_json_path, pred_json_path, iou_type, chunk_cat_ids, params = args
+    iou_type, chunk_cat_ids, params = args
     # 每个子进程独立加载数据（注意内存消耗）
     pid = os.getpid()
-    print(f"{get_nowtime()} 进程 {pid} 开始加载数据")
-    coco_gt = COCO(gt_json_path)
-    coco_dt = coco_gt.loadRes(pred_json_path)
-    print(f"{get_nowtime()} 进程 {pid} 结束加载数据")
+    coco_gt = _shared_cache['coco_gt']
+    coco_dt = _shared_cache['coco_dt']
     # 初始化评估器
     coco_eval = COCOeval(coco_gt, coco_dt, iouType=iou_type)
     # 继承主进程参数设置
@@ -31,7 +41,6 @@ def evaluate_chunk(args):
     # 设置当前进程需要处理的类别ID
     coco_eval.params.catIds = chunk_cat_ids
     # 执行评估
-    pid = os.getpid()
     print(f"{get_nowtime()} 进程 {pid} 开始评估")
     coco_eval.evaluate()
     print(f"{get_nowtime()} 进程 {pid} 结束评估")
@@ -44,25 +53,27 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
     """
     # 主进程加载基础数据
     print(f"{get_nowtime()} 加载数据")
-    coco_gt = COCO(gt_json_path)
-    coco_dt = coco_gt.loadRes(pred_json_path)
+    global _shared_cache
+    _shared_cache['coco_gt'] = COCO(gt_json_path)
+    _shared_cache['coco_dt'] = _shared_cache['coco_gt'].loadRes(pred_json_path)
     print(f"{get_nowtime()} 数据加载完毕")
     # 初始化主评估器获取参数
-    main_evaluator = COCOeval(coco_gt, coco_dt, iouType=iou_type)
+    main_evaluator = COCOeval(_shared_cache['coco_gt'], _shared_cache['coco_dt'], iouType=iou_type)
     params = copy.deepcopy(main_evaluator.params)
 
     # 获取所有类别ID并分块
-    all_cat_ids = coco_gt.getCatIds()
+    all_cat_ids = _shared_cache['coco_gt'].getCatIds()
     chunks = np.array_split(all_cat_ids, num_processes)
 
     # 准备多进程参数
     task_args = [
-        (gt_json_path, pred_json_path, iou_type, chunk.tolist(), params)
+        (iou_type, chunk.tolist(), params)
         for chunk in chunks
     ]
 
     # 创建进程池
-    with multiprocessing.Pool(processes=num_processes) as pool:
+    with multiprocessing.Pool(processes=num_processes, initializer=_init_worker,  # 初始化worker验证数据
+        initargs=(_shared_cache,)) as pool:
         results = pool.map(evaluate_chunk, task_args)
 
     # 合并所有子进程结果
@@ -100,6 +111,11 @@ if __name__ == '__main__':
         "/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json",
         num_processes=10
     )
+    # metrics = parallel_coco_evaluation(
+    #     "/data/data/final/product/product_yolo/valid/annotations/instances_product_valid.json",
+    #     "/data/chaihaojiang/postprocess_data_0305/vild/vild_product_val_prediction_visualized_coco_baseline.json",
+    #     num_processes=2
+    # )
     end_time = time.time()
     print(f"共耗时{end_time - start_time}秒")
     print(metrics)
