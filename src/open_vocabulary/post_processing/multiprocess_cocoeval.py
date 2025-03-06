@@ -2,7 +2,6 @@ import copy
 import multiprocessing
 import os
 import time
-
 import numpy as np
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
@@ -78,9 +77,17 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
         results = pool.map(evaluate_chunk, task_args)
 
     # 合并所有子进程结果
-    main_evaluator.evalImgs = [
-        img for chunk_results in results for img in chunk_results
-    ]
+    # main_evaluator.evalImgs = [
+    #     img for chunk_results in results for img in chunk_results
+    # ]
+    # 上面的合并子进程返回值的方式太低效，这里采用更高效的合并方式
+    total_len = sum(len(chunk) for chunk in results)
+    merged = np.empty(total_len, dtype=object)
+    offset = 0
+    for chunk in results:
+        merged[offset:offset + len(chunk)] = chunk
+        offset += len(chunk)
+    main_evaluator.evalImgs = merged.tolist()
     print(f"{get_nowtime()} 所有进程evaluate结束")
     # 后续聚合计算
     main_evaluator._paramsEval = copy.deepcopy(main_evaluator.params)
