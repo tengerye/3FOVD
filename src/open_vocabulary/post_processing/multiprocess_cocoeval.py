@@ -118,7 +118,7 @@ if __name__ == '__main__':
     start_time = time.time()
     metrics = parallel_coco_evaluation(
         "/root/post_process_data/dino/vehicle/instances_vehicle_test.json",
-        "/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_coco_baseline.json",
+        "/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_remove_cover_v2.json",
         num_processes=10
     )
     # metrics = parallel_coco_evaluation(
