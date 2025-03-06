@@ -117,8 +117,8 @@ if __name__ == '__main__':
     # 使用示例
     start_time = time.time()
     metrics = parallel_coco_evaluation(
-        "/root/post_process_data/vild/product/instances_product_test.json",
-        "/root/post_process_data/vild/product/vild_product_test_prediction.json",
+        "/root/post_process_data/dino/vehicle/instances_vehicle_test.json",
+        "/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_coco_baseline.json",
         num_processes=10
     )
     # metrics = parallel_coco_evaluation(
