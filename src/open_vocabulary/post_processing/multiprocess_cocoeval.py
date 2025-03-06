@@ -58,7 +58,6 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
     print(f"{get_nowtime()} 数据加载完毕")
     # 初始化主评估器获取参数
     main_evaluator = COCOeval(_shared_cache['coco_gt'], _shared_cache['coco_dt'], iouType=iou_type)
-    main_evaluator.params.iouThrs = np.array([0.5])
     params = copy.deepcopy(main_evaluator.params)
 
     # 获取所有类别ID并分块
