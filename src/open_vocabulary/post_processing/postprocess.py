@@ -225,7 +225,7 @@ if __name__ == "__main__":
         raw_preds = json.load(f)
     print(f'{get_nowtime()}  预测文件加载完毕')
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
-    print("后处理完成，将结果写入文件")
+    print(f"{get_nowtime()} 后处理完成，将结果写入文件")
     with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_baseline.json", "w") as f:
         json.dump(pred_coco_format, f)
     # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[
