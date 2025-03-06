@@ -31,18 +31,26 @@ We need to convert this format to the standard COCO-style detection format:
 ]
 ```
 """
+from datetime import datetime
+import time
 from functools import partial
 import json
 from typing import List, Tuple
 
 
+def get_nowtime():
+    now = datetime.now()
+    formatted_time = now.strftime('%Y/%m/%d %H:%M:%S')
+    return formatted_time
+
+
 def remove_covered_boxes(
-        bboxes, 
+        bboxes,
         scores,
         labels,
         type,
         threshold=0.5,
-    ) -> List[int]:
+) -> List[int]:
     """
     Remove boxes that are covered by a higher-confidence box beyond the given threshold.
     Also returns the original indices of the kept boxes.
@@ -71,22 +79,22 @@ def remove_covered_boxes(
         """Compute intersection area between two boxes."""
         ax1, ay1, ax2, ay2 = box_a
         bx1, by1, bx2, by2 = box_b
-        
+
         inter_x1 = max(ax1, bx1)
         inter_y1 = max(ay1, by1)
         inter_x2 = min(ax2, bx2)
         inter_y2 = min(ay2, by2)
-        
+
         inter_w = max(0, inter_x2 - inter_x1)
         inter_h = max(0, inter_y2 - inter_y1)
-        
+
         return inter_w * inter_h
 
     # Sort indices by descending confidence
     indices_sorted_by_score = sorted(range(len(bboxes)), key=lambda i: scores[i], reverse=True)
-    
+
     keep_indices = []
-    
+
     for idx in indices_sorted_by_score:
         box = bboxes[idx]
         box_area = area(box)
@@ -104,15 +112,15 @@ def remove_covered_boxes(
         for kept_idx in keep_indices:
             inter_area = intersection_area(bboxes[kept_idx], box)
             cover_ratio = inter_area / float(box_area) if box_area > 0 else 0
-            
+
             # If current box is covered beyond threshold by a higher confidence box, we skip it
             if cover_ratio >= threshold and scores[kept_idx] >= scores[idx]:
                 covered = True
                 break
-        
+
         if not covered:
             keep_indices.append(idx)
-    
+
     # Sort 'keep_indices' so that final results follow the original input order
     keep_indices.sort()
 
@@ -120,12 +128,11 @@ def remove_covered_boxes(
 
 
 def remove_boxes_by_keywords(
-        bboxes, 
+        bboxes,
         scores,
-        labels, 
+        labels,
         threshold=0.5,
-    ) -> List[int]:
-
+) -> List[int]:
     keywords = ['logo']
     assert len(bboxes) == len(scores), \
         "Length of bboxes and scores must match."
@@ -136,10 +143,11 @@ def remove_boxes_by_keywords(
         answer.append(idx)
     return answer
 
+
 def convert_custom_predictions_to_coco(
-    custom_preds,
-    pp_func_iter: List[callable] = None,
-    top_k=100,
+        custom_preds,
+        pp_func_iter: List[callable] = None,
+        top_k=100,
 ) -> List[dict]:
     """
     Convert a custom prediction format into standard COCO-style detection results.
@@ -200,7 +208,7 @@ def convert_custom_predictions_to_coco(
                 }
                 coco_results.append(detection)
         img_cnt += 1
-        if img_cnt % 100 ==0:
+        if img_cnt % 100 == 0:
             print(f"has handled img num is : {img_cnt}")
 
     return coco_results
@@ -212,15 +220,16 @@ def evaluate():
 
 # Example usage:
 if __name__ == "__main__":
-    print("开始load 预测文件")
+    print(f"{get_nowtime()}  开始load 预测文件")
     with open("/root/post_process_data/vild/product/vild_product_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
-    print("预测文件加载完毕")
+    print(f'{get_nowtime()}  预测文件加载完毕')
     # pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
     # print("后处理完成，将结果写入文件")
     # with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_baseline.json", "w") as f:
-        # json.dump(pred_coco_format, f)
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[partial(remove_covered_boxes, threshold=0.8, type="product")])
-    print("后处理完成，将结果写入文件")
+    # json.dump(pred_coco_format, f)
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[
+        partial(remove_covered_boxes, threshold=0.8, type="product")])
+    print(f"{get_nowtime()}  后处理完成")
     with open("/root/post_process_data/vild/product/vild_product_test_prediction_coco_remove_cover_v2.json", "w") as f:
-         json.dump(pred_coco_format, f)
+        json.dump(pred_coco_format, f)

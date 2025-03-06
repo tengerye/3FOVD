@@ -1,8 +1,17 @@
 #!/usr/bin/env python3
 
 import json
+import time
+from datetime import datetime
 from pycocotools.coco import COCO
 from pycocotools.cocoeval import COCOeval
+
+
+def get_nowtime():
+    now = datetime.now()
+    formatted_time = now.strftime('%Y/%m/%d %H:%M:%S')
+    return formatted_time
+
 
 def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
     """
@@ -12,17 +21,17 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
     :param pred_json_path: Path to JSON with detection results.
     :param iou_type: The iouType to evaluate ('bbox', 'segm', or 'keypoints').
     """
-    print("开始加载数据")
+    print(f"{get_nowtime()} 开始加载数据")
     # Load ground truth annotations
     coco_gt = COCO(gt_json_path)
-    
+
     # Load predicted results
     coco_dt = coco_gt.loadRes(pred_json_path)
-    
-    print("数据加载完毕")
+
+    print(f"{get_nowtime()}  数据加载完毕")
     # Initialize COCOeval object
     coco_eval = COCOeval(coco_gt, coco_dt, iouType=iou_type)
-    print("开始计算")
+    print(f"{get_nowtime()} 开始计算")
     # Run evaluation
     coco_eval.evaluate()
     coco_eval.accumulate()
@@ -47,6 +56,7 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
     }
 
     return metrics
+
 
 if __name__ == "__main__":
     # Example usage:
