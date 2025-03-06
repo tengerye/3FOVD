@@ -59,6 +59,7 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
     print(f"{get_nowtime()} 数据加载完毕")
     # 初始化主评估器获取参数
     main_evaluator = COCOeval(_shared_cache['coco_gt'], _shared_cache['coco_dt'], iouType=iou_type)
+    main_evaluator.params.iouThrs = np.array([0.5])
     params = copy.deepcopy(main_evaluator.params)
 
     # 获取所有类别ID并分块
@@ -106,16 +107,16 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
 if __name__ == '__main__':
     # 使用示例
     start_time = time.time()
-    metrics = parallel_coco_evaluation(
-        "/root/post_process_data/vild/product/instances_product_test.json",
-        "/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json",
-        num_processes=10
-    )
     # metrics = parallel_coco_evaluation(
-    #     "/data/data/final/product/product_yolo/valid/annotations/instances_product_valid.json",
-    #     "/data/chaihaojiang/postprocess_data_0305/vild/vild_product_val_prediction_visualized_coco_baseline.json",
-    #     num_processes=2
+    #     "/root/post_process_data/vild/product/instances_product_test.json",
+    #     "/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json",
+    #     num_processes=10
     # )
+    metrics = parallel_coco_evaluation(
+        "/data/data/final/product/product_yolo/valid/annotations/instances_product_valid.json",
+        "/data/chaihaojiang/postprocess_data_0305/vild/vild_product_val_prediction_visualized_coco_baseline.json",
+        num_processes=2
+    )
     end_time = time.time()
     print(f"共耗时{end_time - start_time}秒")
     print(metrics)
