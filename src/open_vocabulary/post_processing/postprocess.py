@@ -224,12 +224,12 @@ if __name__ == "__main__":
     with open("/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction.json", "r") as f:
         raw_preds = json.load(f)
     print(f'{get_nowtime()}  预测文件加载完毕')
-    pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
-    print(f"{get_nowtime()} 后处理完成，将结果写入文件")
-    with open("/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_coco_baseline.json", "w") as f:
-        json.dump(pred_coco_format, f)
-    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[
-    #     partial(remove_covered_boxes, threshold=0.8, type="product")])
-    # print(f"{get_nowtime()}  后处理完成")
-    # with open("/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json", "w") as f:
+    # pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
+    # print(f"{get_nowtime()} 后处理完成，将结果写入文件")
+    # with open("/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_coco_baseline.json", "w") as f:
     #     json.dump(pred_coco_format, f)
+    pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[
+        partial(remove_covered_boxes, threshold=0.8, type="vehicle")])
+    print(f"{get_nowtime()}  后处理完成")
+    with open("/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_remove_cover_v2.json", "w") as f:
+        json.dump(pred_coco_format, f)
