@@ -31,10 +31,13 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
     print(f"{get_nowtime()}  数据加载完毕")
     # Initialize COCOeval object
     coco_eval = COCOeval(coco_gt, coco_dt, iouType=iou_type)
-    print(f"{get_nowtime()} 开始计算")
+    print(f"{get_nowtime()} 开始evaluate")
     # Run evaluation
     coco_eval.evaluate()
+    print(f"{get_nowtime()} 结束evaluate")
+    print(f"{get_nowtime()} 开始accumulate")
     coco_eval.accumulate()
+    print(f"{get_nowtime()} 结束accumulate")
     coco_eval.summarize()
 
     # The COCOeval object holds all evaluation results in coco_eval.stats
@@ -59,10 +62,13 @@ def coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox'):
 
 
 if __name__ == "__main__":
+    start_time = time.time()
     # Example usage:
-    ground_truth_json = "/root/post_process_data/vild/product/annotations/instances_product_test.json"
-    predictions_json = "/root/post_process_data/dino/groundingdino_product_test_prediction_coco_baseline.json"
+    ground_truth_json = "/root/post_process_data/vild/product/instances_product_test.json"
+    predictions_json = "/root/post_process_data/dino/groundingdino_product_test_prediction_remove_cover_v2.json"
 
     results = coco_evaluation(ground_truth_json, predictions_json, iou_type="bbox")
+    end_time = time.time()
+    print(f"共耗时{end_time - start_time}秒")
     print("COCO Evaluation Results:")
     print(results)
