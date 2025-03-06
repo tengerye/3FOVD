@@ -82,11 +82,14 @@ def parallel_coco_evaluation(gt_json_path, pred_json_path, iou_type='bbox', num_
     # ]
     # 上面的合并子进程返回值的方式太低效，这里采用更高效的合并方式
     total_len = sum(len(chunk) for chunk in results)
+    print(f"{get_nowtime()} 数组开始预分配")
     merged = np.empty(total_len, dtype=object)
+    print(f"{get_nowtime()} 数组结束分配")
     offset = 0
     for chunk in results:
         merged[offset:offset + len(chunk)] = chunk
         offset += len(chunk)
+    print(f"{get_nowtime()} 子进程数据合并结束")
     main_evaluator.evalImgs = merged.tolist()
     print(f"{get_nowtime()} 所有进程evaluate结束")
     # 后续聚合计算
