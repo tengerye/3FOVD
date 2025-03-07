@@ -10,12 +10,14 @@ def sample_dataset(input_path, output_path, sample_size=1000):
         data = json.load(f)
 
     # 获取所有唯一的image_id
-    all_image_ids = []
+    all_image_ids = set()
     for item in tqdm(data):
-        all_image_ids.append(item["image_id"])
+        all_image_ids.add(item["image_id"])
+        if len(all_image_ids) >= 10000:
+            break
 
     # 随机抽取指定数量的image_id
-    sampled_image_ids = random.sample(all_image_ids, sample_size)
+    sampled_image_ids = random.sample(list(all_image_ids), sample_size)
 
     # 过滤出选中image_id对应的数据
     sampled_data = []
