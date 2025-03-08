@@ -221,12 +221,12 @@ def evaluate():
 # Example usage:
 if __name__ == "__main__":
     print(f"{get_nowtime()}  开始load 预测文件")
-    with open("/root/post_process_data/detic/detic_product_test_predict.json", "r") as f:
+    with open("/root/post_process_data/detic/vehicle/detic_car_test_pred.json", "r") as f:
         raw_preds = json.load(f)
     print(f'{get_nowtime()}  预测文件加载完毕')
     pred_coco_format = convert_custom_predictions_to_coco(raw_preds)
     print(f"{get_nowtime()} 后处理完成，将结果写入文件")
-    with open("/root/post_process_data/detic/detic_product_test_predict_coco_baseline.json", "w") as f:
+    with open("/root/post_process_data/detic/vehicle/detic_car_test_pred_coco_baseline.json", "w") as f:
         json.dump(pred_coco_format, f)
     # pred_coco_format = convert_custom_predictions_to_coco(raw_preds, pp_func_iter=[
     #     partial(remove_covered_boxes, threshold=0.8, type="vehicle")])
