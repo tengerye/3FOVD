@@ -65,7 +65,7 @@ if __name__ == "__main__":
     start_time = time.time()
     # Example usage:
     ground_truth_json = "/root/post_process_data/dino/vehicle/instances_vehicle_test.json"
-    predictions_json = "/root/post_process_data/detic/vehicle/detic_car_test_pred_coco_baseline.json"
+    predictions_json = "/root/post_process_data/detic/vehicle/detic_car_test_pred_remove_cover_v2.json"
     # ground_truth_json = "/data/data/final/product/product_yolo/valid/annotations/instances_product_valid.json"
     # predictions_json = "/data/chaihaojiang/postprocess_data_0305/vild/vild_product_val_prediction_visualized_coco_baseline.json"
     results = coco_evaluation(ground_truth_json, predictions_json, iou_type="bbox")
