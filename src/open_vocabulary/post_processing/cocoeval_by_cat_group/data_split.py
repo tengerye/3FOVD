@@ -49,6 +49,6 @@ def main(detection_path, output_dir):
 
 
 if __name__ == '__main__':
-    detection_path = "/root/post_process_data/dino/vehicle/groundingdino_vehicle_test_prediction_coco_baseline.json"
+    detection_path = "/root/post_process_data/vild/vehicle/vild_car_test_prediction_remove_cover_v2.json"
     output_dir = "/root/exp/detection_group"
     main(detection_path, output_dir)
