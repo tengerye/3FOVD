@@ -1,0 +1,1 @@
+The predictions of each open-vocabulary object detectors can be found as follows: [dropbox](https://www.dropbox.com/scl/fo/ee59ias2mdg83jw3axwfm/ABb-V9qpYVfreomCBPkS4xs?rlkey=1353tt3jjuxf60ezb8l4j66is&st=7iz5u92e&dl=1), [百度网盘](https://pan.baidu.com/s/1EHATTeJawpSR5ZB92kDQCA?pwd=am7f).
