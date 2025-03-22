@@ -2,7 +2,7 @@ We put the sampled images and corresponding annotation files into `datasets` fol
 
 # Datasets
 
-[here](./path/to/other/README.md)
+You can find the descriptions of our datasets at [here](./datasets/README.md)
 
 
 # Codebase
