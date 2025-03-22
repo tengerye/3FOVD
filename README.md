@@ -2,24 +2,7 @@ We put the sampled images and corresponding annotation files into `datasets` fol
 
 # Datasets
 
-The structure of the 3FOVD-RP is like the follows:
-```
-- train
-    - images.zip
-    - instances_rp_train.json
-- val
-    - images.zip
-    - instances_rp_val.json
-- test
-    - images.zip
-    - instances_rp_test.json
-
-- rp_categories.csv
-```
-
-The structure of the 3FOVD-V is similar as that of 3FOVD-RP, but replacing `rp` with `car` from the above.
-
-The dataset can only be used for research only. Feel free to contact us if you think our dataset violate your privacy.
+[here](./path/to/other/README.md)
 
 
 # Codebase
@@ -37,4 +20,18 @@ The structure of this codebase is as follows:
         - vild
 
     - post_process: codes for improving the open-vocabulary object detectors (section V-D).
+```
+
+
+# Reference
+
+> BibTeX Style Citation
+
+```
+@article{liu2025fine,
+  title={Fine-Grained Open-Vocabulary Object Detection with Fined-Grained Prompts: Task, Dataset and Benchmark},
+  author={Liu, Ying and Hua, Yijing and Chai, Haojiang and Wang, Yanbo and Ye, TengQi},
+  journal={arXiv preprint arXiv:2503.14862},
+  year={2025}
+}
 ```

@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use our dataset or codes, please cite it as below."
+authors:
+  - family-names: Liu
+    given-names: Ying
+  - family-names: Hua
+    given-names: Yijing
+  - family-names: Chai
+    given-names: Haojiang
+  - family-names: Wang
+    given-names: Yanbo
+  - family-names: Ye
+    given-names: TengQi
+  - family-names: "Bot"
+    given-names: "Hew"
+    orcid: "https://orcid.org/0000-0002-3501-8599"
+title: "Fine-Grained Open-Vocabulary Object Detection with Fined-Grained Prompts: Task, Dataset and Benchmark"
+version: 1.0.0
+doi: 10.13140/RG.2.2.14172.71049
+date-released: 2025-05-22
+url: "https://github.com/tengerye/3FOVD"
+type: article-journal
+year: '2025'
+conference: {}
+publisher: {}
