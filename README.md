@@ -19,9 +19,15 @@ Official codebase and dataset for the ICRA 2025 paper
 
 The NEU-171K dataset includes:
 - **145,825 images**, **676,471 bounding boxes**, **719 fine-grained classes**.
-- Two domains:
-  - **NEU-171K-C**: cars in real-world traffic scenes.
-  - **NEU-171K-RP**: retail products captured in controlled warehouse settings.
+- Two domains: NEU-171K-C and NEU-171K-RP.
+
+### NEU-171K-C
+NEU-171K-C contains cars in real-world traffic scenes.
+![NEU-171K-C](figures/car_cover.jpg)
+
+### NEU-171K-RP
+NEU-171K-RP contains retail products captured in controlled warehouse settings.
+![NEU-171K-RP](figures/rp_cover.jpg)
 
 You can access the dataset from:
 
@@ -30,9 +36,6 @@ You can access the dataset from:
 - [Baidu Netdisk](./datasets/README.md#baidu-netdisk)
 
 More details on dataset structure and statistics are in [`datasets/README.md`](./datasets/README.md).
-
-![NEU-171K-C](figures/car_cover.jpg)
-![NEU-171K-RP](figures/rp_cover.jpg)
 
 ---
 
