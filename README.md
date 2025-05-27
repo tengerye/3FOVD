@@ -1,35 +1,87 @@
-We put the sampled images and corresponding annotation files into `datasets` folder. The full data will be released immediately after the paper is accepted.
+# 3F-OVD: Fine-Grained Open-Vocabulary Object Detection  
+Official codebase and dataset for the ICRA 2025 paper  
+**"Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark"**  
+[[Paper]](https://arxiv.org/abs/2503.14862) | [[Project Page]](https://github.com/tengerye/3FOVD)
 
-# Datasets
+---
 
-You can find the descriptions of our datasets at [here](./datasets/README.md)
+## Overview
 
+**3F-OVD** introduces a new benchmark for **fine-grained open-vocabulary object detection** (OVD), designed to evaluate detectors under **realistic**, **challenging**, and **scalable** conditions. We highlight the limitations of existing evaluation protocols and propose:
 
-# Codebase
-The structure of this codebase is as follows:
+- A novel **evaluation task** that extends fine-grained detection to an open-vocabulary setting with class-level captions.
+- A large-scale **NEU-171K dataset** spanning **two domains**: vehicles and retail products.
+- A simple yet effective **post-processing method** that boosts the performance of open-vocabulary detectors by reducing false positives.
+
+---
+
+## Dataset: NEU-171K
+
+The NEU-171K dataset includes:
+- **145,825 images**, **676,471 bounding boxes**, **719 fine-grained classes**.
+- Two domains:
+  - **NEU-171K-C**: cars in real-world traffic scenes.
+  - **NEU-171K-RP**: retail products captured in controlled warehouse settings.
+
+You can access the dataset from:
+
+- [HuggingFace](https://huggingface.co/datasets/tengerye/NEU-171K)
+- [Dropbox](./datasets/README.md#dropbox)
+- [Baidu Netdisk](./datasets/README.md#baidu-netdisk)
+
+More details on dataset structure and statistics are in [`datasets/README.md`](./datasets/README.md).
+
+![NEU-171K-C](figures/car_cover.jpg)
+![NEU-171K-RP](figures/rp_cover.jpg)
+
+---
+
+## Benchmarking & Codebase
+
+This repository includes:
 ```
-- datasets
-    - README.md: instructions to download our datasets.
+- datasets/
+    - README.md          # Dataset description and download instructions
 
-- src: codes for repeating experiments.
-    - supervised: codes for traditional object detectors (section V-B in our paper).
-    - open_vocabulary: codes for benchmarking open-vocabulary object detectors (section V-C in our paper).
-        - cora
-        - detic
-        - gdino
-        - vild
+- src/
+    - supervised/        # Training & evaluation of traditional detectors (Section V-B)
+    - open_vocabulary/   # Evaluation of open-vocabulary detectors (Section V-C)
+        - cora/
+        - detic/
+        - gdino/
+        - vild/
 
-    - post_process: codes for improving the open-vocabulary object detectors (section V-D).
+    - post_process/      # Our custom post-processing for reducing false positives (Section V-D)
 ```
 
+### Supported Baselines
+- **Supervised**: Co-DETR, Faster R-CNN, FCOS, PAA, etc.
+- **Open-Vocabulary**: ViLD, Detic, Grounding DINO
 
-# Reference
+### Run Evaluation
+Instructions for running each baseline and applying the post-processing trick are included in the respective subfolders under `src/`.
 
-> BibTeX Style Citation
+---
 
-```
+## Benchmarks
+
+| Protocol | Detector     | NEU-171K-C (mAP) | NEU-171K-RP (mAP) |
+|----------|--------------|------------------|-------------------|
+| 3F-OVD   | Detic        | 6.3e-4           | 2.0e-2            |
+|          | GroundingDINO| 1.2e-3           | 7.4e-4            |
+|          | ViLD         | 3.3e-4           | 7.5e-3            |
+| +PostProc| Detic        | **+4.7%**        | **+10.0%**        |
+
+Post-processing improves accuracy by reducing false-positive bounding boxes generated from caption tokens.
+
+---
+
+## Citation
+
+If you use this work, please cite:
+```bibtex
 @article{liu2025fine,
-  title={Fine-Grained Open-Vocabulary Object Detection with Fined-Grained Prompts: Task, Dataset and Benchmark},
+  title={Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark},
   author={Liu, Ying and Hua, Yijing and Chai, Haojiang and Wang, Yanbo and Ye, TengQi},
   journal={arXiv preprint arXiv:2503.14862},
   year={2025}
