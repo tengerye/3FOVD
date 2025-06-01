@@ -1,6 +1,6 @@
-# 3F-OVD: Fine-Grained Open-Vocabulary Object Detection  
-Official codebase and dataset for the ICRA 2025 paper  
-**"Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark"**  
+# Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark  
+Official codebase and dataset for the ICRA 2025 paper (Oral) 
+**"Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark"**
 [[Paper]](https://arxiv.org/abs/2503.14862) | [[Project Page]](https://github.com/tengerye/3FOVD)
 
 ---
@@ -31,6 +31,7 @@ NEU-171K-RP contains retail products captured in controlled warehouse settings.
 
 You can access the dataset from:
 
+- [Kaggle](./datasets/README.md#kaggle)
 - [HuggingFace](https://huggingface.co/datasets/tengerye/NEU-171K)
 - [Dropbox](./datasets/README.md#dropbox)
 - [Baidu Netdisk](./datasets/README.md#baidu-netdisk)
@@ -68,12 +69,15 @@ Instructions for running each baseline and applying the post-processing trick ar
 
 ## Benchmarks
 
-| Protocol | Detector     | NEU-171K-C (mAP) | NEU-171K-RP (mAP) |
-|----------|--------------|------------------|-------------------|
-| 3F-OVD   | Detic        | 6.3e-4           | 2.0e-2            |
-|          | GroundingDINO| 1.2e-3           | 7.4e-4            |
-|          | ViLD         | 3.3e-4           | 7.5e-3            |
-| +PostProc| Detic        | **+4.7%**        | **+10.0%**        |
+| Method | Trick | NEU-171K-C         | NEU-171K-RP         |
+|--------|-------|--------------------|---------------------|
+| GDino  | w/o   | 1.2e-03            | 7.4e-04             |
+| GDino  | w     | 1.3e-03 (+8.3%)    | 7.6e-04 (+2.6%)     |
+| Detic  | w/o   | 6.3e-04            | 2.0e-02             |
+| Detic  | w     | 6.6e-04 (+4.7%)    | 2.2e-02 (+10.0%)    |
+| Vild   | w/o   | 3.3e-04            | 7.5e-03             |
+| Vild   | w     | 3.8e-04 (+15.2%)   | 10.6e-03 (+41.3%)   |
+
 
 Post-processing improves accuracy by reducing false-positive bounding boxes generated from caption tokens.
 

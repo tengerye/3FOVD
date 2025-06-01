@@ -37,7 +37,7 @@ The dataset can only be used for research only. This dataset is strictly for res
 
 # Download
 ## Kaggle
-[NEU-171K-C](https://www.kaggle.com/datasets/tenger/neu-171k-c).
+[NEU-171K-C](https://www.kaggle.com/datasets/tenger/neu-171k-c). [NEU-171K-RP](https://www.kaggle.com/datasets/tenger/neu-171k-rp).
 
 ## Huggingface
 [NEU-171K](https://huggingface.co/datasets/tengerye/NEU-171K) contains both NEU-171K-C and NEU-171K-RP as its sub-folders in the root directory.
