@@ -1,7 +1,7 @@
 # Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark  
 Official codebase and dataset for the ICRA 2025 paper (Oral) 
 **"Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark"**
-[[Paper]](https://arxiv.org/abs/2503.14862) | [[Project Page]](https://github.com/tengerye/3FOVD)
+[[Paper]](https://ieeexplore.ieee.org/document/11128430) | [[Project Page]](https://github.com/tengerye/3FOVD)
 
 ---
 
@@ -87,10 +87,14 @@ Post-processing improves accuracy by reducing false-positive bounding boxes gene
 
 If you use this work, please cite:
 ```bibtex
-@article{liu2025fine,
-  title={Fine-Grained Open-Vocabulary Object Detection with Fine-Grained Prompts: Task, Dataset and Benchmark},
+@INPROCEEDINGS{11128430,
   author={Liu, Ying and Hua, Yijing and Chai, Haojiang and Wang, Yanbo and Ye, TengQi},
-  journal={arXiv preprint arXiv:2503.14862},
-  year={2025}
-}
+  booktitle={2025 IEEE International Conference on Robotics and Automation (ICRA)}, 
+  title={Fine-Grained Open-Vocabulary Object Detection with Fined-Grained Prompts: Task, Dataset and Benchmark}, 
+  year={2025},
+  volume={},
+  number={},
+  pages={13860-13867},
+  keywords={Vocabulary;Accuracy;Codes;Annotations;Face recognition;Object detection;Detectors;Benchmark testing;Robotics and automation},
+  doi={10.1109/ICRA55743.2025.11128430}}
 ```
