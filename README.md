@@ -39,11 +39,6 @@ You can access the dataset from:
 More details on dataset structure and statistics are in [`datasets/README.md`](./datasets/README.md).
 
 ---
-## Warning
-We found some annotation errors in NEU-171K-RP. Prioritize NEU-171K-C for now and we will release our fix plan soon.
-Thanks to Yeeun Lee (yelee@rcv.sejong.ac.kr) from Robotics and Computer Vision Lab, Sejong University.
-
----
 
 ## Benchmarking & Codebase
 
